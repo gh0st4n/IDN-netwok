@@ -9,22 +9,36 @@ Pada level ini, kita akan mempelajari bagaimana cara menggunakan perintah dasar 
 - file
 
 ### Tugas
-- Mencari password yang berada di file `readme`
+* Mencari password yang berada di file `readme`
+* Mengambil password untuk login ke level berikutnya
 
 ### Proses
-1. ls (Menampilkan file & folder)
+1. Masuk Server :
+   ```bash
+   $ ssh bandit0@bandit.labs.overthewire.org -p 2220
+   ```
+
+---
+
+2. ls (Menampilkan file & folder)
     ```bash
     $ ls atau $ ls | grep readme
     ```
-2. file (Memastikan jenis file)
+
+---
+
+3. file (Memastikan jenis file)
     ```
-    file readme
+    $ file readme
     ```
     output :
     ```
-    readme: ASCII text
+    $ readme: ASCII text
     ```
-3. cat (Membaca isi file)
+
+---
+
+4. cat (Membaca isi file)
     1. ```
        $ cat readme
        ```
@@ -34,7 +48,10 @@ Pada level ini, kita akan mempelajari bagaimana cara menggunakan perintah dasar 
     3. ```
        $ cat readme | grep "password"
        ```
-4. Output :
+
+---
+
+5. Output :
 
 ```The password you are looking for is:```
 **ZjLjTmM6FvvyRnrb2rfNWOZOTa6ip5If**

@@ -19,7 +19,8 @@ Anda akan menghadapi banyak situasi di mana Anda tidak tahu apa yang harus Anda 
 Tujuan dari level ini adalah agar Anda masuk ke dalam game menggunakan SSH. `Host` yang perlu Anda hubungkan adalah **bandit.labs.overthewire.org** , pada `port` **2220**. `Nama pengguna` adalah **bandit0** dan `kata sandinya` adalah **bandit0**.
 
 ### Tugas
-- Menghubungkan server dengan sistem kita
+* Menghubungkan server dengan sistem kita
+* Mengambil password untuk login ke level berikutnya
 
 ### Proses
 
