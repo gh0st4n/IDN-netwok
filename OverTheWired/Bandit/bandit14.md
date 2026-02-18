@@ -106,9 +106,9 @@ Jika berhasil → kamu masuk sebagai `bandit14`.
 
 ```bash
 $ cat /etc/bandit_pass/bandit14
-```
 
-Output akan menampilkan password untuk level 14.
+>>> MU4VWeTyJk8ROof1qqmcBPaLh7lDCPvS
+```
 
 ---
 
