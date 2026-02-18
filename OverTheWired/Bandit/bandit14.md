@@ -4,152 +4,155 @@
 
 ---
 
-## Deskripsi Level
+### Deskripsi Level
 
-Password untuk level berikutnya berada di:
+Pada level ini, kita **tidak menggunakan password lagi**.
 
-```
-/etc/bandit_pass/bandit14
-```
+Password level berikutnya **tidak bisa dibaca langsung oleh user bandit13**.
 
-Tetapi:
-
-* File tersebut hanya bisa dibaca oleh user `bandit14`
-* Kita **tidak diberikan password**
-* Kita diberikan **private SSH key**
-* Key itu digunakan untuk login sebagai `bandit14`
-
-Intinya:
-Level ini menguji pemahaman dasar **SSH key authentication**.
-
----
-
-## Objective
-
-* Temukan private key di home `bandit13`
-* Gunakan key tersebut untuk login sebagai `bandit14`
-* Ambil password dari `/etc/bandit_pass/bandit14`
-
----
-
-# Proses Step-by-Step
-
----
-
-## 1️⃣ Login sebagai bandit13
-
-```bash
-ssh bandit13@bandit.labs.overthewire.org -p 2220
-```
-
----
-
-## 2️⃣ Cek Isi Home Directory
-
-```bash
-ls -la
-```
-
-Biasanya akan terlihat file seperti:
+Sebagai gantinya, kita diberikan:
 
 ```
 sshkey.private
 ```
 
-Itulah private key yang dimaksud.
+File tersebut adalah **private SSH key** yang harus digunakan untuk login sebagai `bandit14`.
 
 ---
 
-## 3️⃣ Periksa Permission File
+### Konsep Inti
 
-```bash
-ls -l sshkey.private
-```
-
-Jika permission terlalu terbuka, SSH akan menolak.
-
-Minimal harus:
+Selama ini login pakai:
 
 ```
-600
+username + password
 ```
 
-Jika perlu, ubah:
+Di level ini kita pakai:
 
-```bash
-chmod 600 sshkey.private
 ```
+username + private key
+```
+
+Ini adalah metode autentikasi profesional yang lebih aman.
 
 ---
 
-## 4️⃣ Login Menggunakan Private Key
+## Tugas
 
-Gunakan opsi `-i` pada ssh:
-
-```bash
-ssh -i sshkey.private bandit14@localhost -p 2220
-```
-
-Kenapa `localhost`?
-
-Karena kita sudah berada di server Bandit.
-Kita hanya berpindah user via SSH internal.
-
-Jika berhasil, prompt akan berubah menjadi:
-
-```
-bandit14@bandit:~$
-```
+* Gunakan private key yang tersedia
+* Login sebagai `bandit14`
+* Ambil password level berikutnya
 
 ---
 
-## 5️⃣ Ambil Password Level 14
+## Proses
+
+### 1. Login ke Level 13
 
 ```bash
-cat /etc/bandit_pass/bandit14
+$ ssh bandit13@bandit.labs.overthewire.org -p 2220
+```
+
+Masukkan password level 13.
+
+---
+
+### 2. Cek File
+
+```bash
+$ ls
 ```
 
 Output:
 
 ```
-<password_level_14>
+sshkey.private
 ```
-
-Itulah password untuk login berikutnya.
 
 ---
 
-# Konsep yang Dipelajari
+### 3. Atur Permission Key
 
-### 🔐 SSH Key Authentication
+SSH menolak private key jika permission terlalu terbuka.
 
-Login SSH bisa menggunakan:
-
-* Password
-* Private/Public Key Pair
-
-Struktur dasar:
-
-```
-ssh -i <private_key> user@host -p <port>
+```bash
+$ chmod 600 sshkey.private
 ```
 
-SSH akan:
+Penjelasan:
 
-1. Menggunakan private key
-2. Mencocokkan dengan public key milik user target
-3. Jika valid → login tanpa password
+* `600` → hanya owner yang bisa read & write
+* SSH mewajibkan key tidak readable oleh user lain
 
 ---
 
-# Ringkasan Teknis
+### 4. Login Menggunakan Private Key
 
-Yang diuji di level ini:
+```bash
+$ ssh -i sshkey.private bandit14@bandit.labs.overthewire.org -p 2220
+```
 
-* Mengidentifikasi private key
-* Mengatur permission file (chmod 600)
-* Menggunakan `ssh -i`
-* Memahami perbedaan login password vs key-based auth
+Penjelasan:
 
-Level ini bukan tentang eksploitasi.
-Ini tentang **mekanisme autentikasi SSH yang benar**.
+* `-i` → identity file (private key)
+* Tidak perlu password
+
+Jika berhasil → kamu masuk sebagai `bandit14`.
+
+---
+
+### 5. Ambil Password Level Berikutnya
+
+```bash
+$ cat /etc/bandit_pass/bandit14
+```
+
+Output akan menampilkan password untuk level 14.
+
+---
+
+### 6. Keluar
+
+```bash
+$ exit
+```
+
+---
+
+## Kenapa Harus chmod 600?
+
+Karena SSH punya strict permission check.
+
+Jika file:
+
+* `644`
+* `777`
+
+Maka SSH akan error:
+
+```
+UNPROTECTED PRIVATE KEY FILE!
+```
+
+Artinya:
+Private key tidak boleh bisa dibaca orang lain.
+
+---
+
+## Yang Dipelajari
+
+* Autentikasi SSH berbasis private key
+* Opsi `-i` pada ssh
+* Permission file & keamanan
+* Konsep dasar asymmetric cryptography dalam praktik
+* Password tidak selalu metode terbaik
+
+---
+
+## Inti Level Ini
+
+Password tidak selalu dipakai langsung.
+Kadang kita harus menggunakan **credential lain** untuk mengakses sistem.
+
+Ini mindset penting di dunia real-world security.

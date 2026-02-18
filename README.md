@@ -6,3 +6,4 @@ Tugas Bootcamp Pentest IDN.Network 09-Feb-2026
 
 ### Source :
 setyanoegraha : https://github.com/setyanoegraha/overthewire-writeups
+Bandit-Walktrough : https://zeroxx.my.id/blog/overthewire/bandit/
