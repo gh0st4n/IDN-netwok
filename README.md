@@ -5,5 +5,5 @@ Tugas Bootcamp Pentest IDN.Network 09-Feb-2026
 ## Over The Wire : [Bandit](./OverTheWired/Bandit/bandit00.md)
 
 ### Source :
-setyanoegraha : https://github.com/setyanoegraha/overthewire-writeups
-Bandit-Walktrough : https://zeroxx.my.id/blog/overthewire/bandit/
+* setyanoegraha : https://github.com/setyanoegraha/overthewire-writeups
+* Bandit-Walktrough : https://zeroxx.my.id/blog/overthewire/bandit/
