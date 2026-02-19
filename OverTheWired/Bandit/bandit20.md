@@ -1,6 +1,6 @@
 .# Over The Wired
 
-## OverTheWire — Bandit Level 20 → 21
+## OverTheWire — Bandit Level 19 → 20
 
 ---
 
@@ -9,57 +9,59 @@
 Instruksi:
 
 ```
-Ada setuid binary di home directory.
-Binary tersebut akan:
-- Connect ke localhost pada port yang kita tentukan
-- Membaca 1 baris dari koneksi tersebut
-- Membandingkan dengan password bandit20
-- Jika cocok → mengirim password bandit21
+Untuk mendapatkan akses ke level berikutnya,
+gunakan setuid binary di home directory.
+
+Password level berikutnya ada di /etc/bandit_pass
+setelah kamu menggunakan setuid binary tersebut.
 ```
 
-Artinya:
+Keyword penting:
 
-* Kita harus membuat server listener sendiri.
-* Binary akan menjadi client.
-* Kita kirim password level sebelumnya.
-* Jika benar → dia kirim password level berikutnya.
-
-Konsep:
-
-* setuid
-* local socket communication
-* netcat listener
-* authentication via network
+* **setuid binary**
+* Eksekusi sebagai user lain
+* Privilege escalation terbatas
 
 ---
 
 ## 🔐 Login
 
 ```bash
-ssh bandit20@bandit.labs.overthewire.org -p 2220
+ssh bandit19@bandit.labs.overthewire.org -p 2220
 ```
 
-Password level sebelumnya:
-
-```
-GbKksEFF4yrVs6il55v6gwY5aVJe5rj0
-```
+Masukkan password level sebelumnya.
 
 ---
 
-## 1️⃣ Lihat Isi Home
+## 1️⃣ Cek Isi Home Directory
 
 ```bash
 ls -la
 ```
 
-Ada binary:
+Output menunjukkan binary:
 
 ```
-bandit20-do
+-rwsr-x--- 1 bandit20 bandit19 ... bandit20-do
 ```
 
-Jalankan tanpa argumen:
+Perhatikan:
+
+```
+s
+```
+
+Itu berarti **setuid bit aktif**.
+
+Artinya:
+
+> Program ini akan berjalan dengan UID pemilik file (bandit20),
+> bukan UID kita (bandit19).
+
+---
+
+## 2️⃣ Jalankan Tanpa Argumen
 
 ```bash
 ./bandit20-do
@@ -69,154 +71,131 @@ Output:
 
 ```
 Run a command as another user.
+Example: ./bandit20-do id
 ```
 
-Binary yang kita butuhkan adalah:
+Jelas.
 
-```
-suconnect
-```
+Binary ini menjalankan command sebagai user lain.
 
-Cek lagi isi directory — ada binary lain:
+---
 
-```
-suconnect
-```
-
-Jalankan tanpa argumen:
+## 3️⃣ Verifikasi UID
 
 ```bash
-./suconnect
+./bandit20-do id
 ```
 
 Output:
 
 ```
-Usage: ./suconnect <port>
+uid=11020(bandit20) gid=11019(bandit19)
 ```
 
-Jelas.
+Berarti:
+
+* Effective UID = bandit20
+* Kita sekarang bisa akses file milik bandit20
 
 ---
 
-## 🎯 Strategi
+## 4️⃣ Ambil Password Level 20
 
-1. Buka listener dengan `nc`
-2. Jalankan `suconnect` agar connect ke listener
-3. Kirim password bandit20
-4. Terima password bandit21
+Password tersimpan di:
 
-Butuh 2 terminal.
+```
+/etc/bandit_pass/bandit20
+```
 
----
+Normalnya bandit19 tidak bisa baca.
 
-## 2️⃣ Terminal 1 — Listener
-
-Pilih port bebas, misalnya 1234:
+Gunakan setuid binary:
 
 ```bash
-nc -lvp 1234
+./bandit20-do cat /etc/bandit_pass/bandit20
 ```
 
-Listener siap menerima koneksi.
-
----
-
-## 3️⃣ Terminal 2 — Jalankan suconnect
-
-```bash
-./suconnect 1234
-```
-
-Binary akan connect ke localhost:1234.
-
----
-
-## 4️⃣ Kirim Password Bandit20
-
-Di terminal listener (Terminal 1), setelah koneksi masuk,
-kirim:
+Output:
 
 ```
 GbKksEFF4yrVs6il55v6gwY5aVJe5rj0
-```
-
-Tekan Enter.
-
----
-
-## 5️⃣ Response
-
-Jika password benar, akan muncul:
-
-```
-Correct!
-<password_level_21>
-```
-
-Output yang didapat:
-
-```
-gE269g2h3mw3pwgrj0HaUoqen1c9DGr
-```
-
----
-
-## 🔎 Alternatif 1-Line
-
-Bisa juga pakai:
-
-```bash
-echo "GbKksEFF4yrVs6il55v6gwY5aVJe5rj0" | nc -lvp 1234 &
-./suconnect 1234
 ```
 
 ---
 
 ## 🧠 Konsep yang Dipelajari
 
-### 1️⃣ Setuid + Network Interaction
+### 1️⃣ Setuid Bit
 
-Binary berjalan sebagai bandit21.
-Dia membaca input dari socket.
-
----
-
-### 2️⃣ Localhost Networking
-
-Client → localhost
-Server → kita buat sendiri
-
----
-
-### 3️⃣ Flow Proses
+Permission:
 
 ```
-Kita buat listener
-→ suconnect connect ke listener
-→ Kita kirim password bandit20
-→ suconnect validasi
-→ Jika cocok → kirim password bandit21
+-rwsr-x---
+```
+
+`s` pada owner → setuid aktif.
+
+Artinya:
+
+```
+Program berjalan dengan effective UID pemilik file.
 ```
 
 ---
 
-### 4️⃣ Kenapa Ini Aman?
+### 2️⃣ Privilege Escalation Terbatas
 
-Karena:
+Kita tidak menjadi root.
 
-* Password hanya dicek secara lokal
-* Tidak exposed ke jaringan luar
-* Service tidak open ke publik
+Kita hanya menjalankan binary
+dengan privilege user tertentu.
+
+Ini contoh klasik:
+
+* Misconfigured setuid
+* Wrapper privilege
+* Command proxy
+
+---
+
+### 3️⃣ Cara Kerja
+
+Flow:
+
+```
+User bandit19
+→ Execute setuid binary
+→ Effective UID berubah ke bandit20
+→ Jalankan command
+→ Bisa baca file restricted
+```
+
+---
+
+## ⚠ Kenapa Ini Penting di Dunia Nyata?
+
+Setuid binary yang salah konfigurasi
+bisa menyebabkan:
+
+* Privilege escalation
+* Command injection
+* Full system compromise
+
+Makanya binary setuid harus:
+
+* Sangat terbatas
+* Tidak menerima input sembarangan
+* Tidak vulnerable terhadap injection
 
 ---
 
 ## Ringkasan Brutal
 
-* Buat listener.
-* Jalankan suconnect.
-* Kirim password lama.
-* Terima password baru.
+* Lihat permission.
+* Temukan setuid.
+* Jalankan binary.
+* Escalate ke user target.
+* Baca file password.
 * Selesai.
 
-Ini latihan memahami interaksi network lokal + privilege boundary via setuid.
+Ini basic privilege escalation via setuid.

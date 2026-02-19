@@ -1,6 +1,6 @@
 .# Over The Wired
 
-## OverTheWire — Bandit Level 21 → 22
+## OverTheWire — Bandit Level 20 → 21
 
 ---
 
@@ -9,37 +9,152 @@
 Instruksi:
 
 ```
-Sebuah program dijalankan otomatis secara berkala oleh cron.
-Lihat konfigurasi di /etc/cron.d/ untuk mengetahui command yang dieksekusi.
+Ada setuid binary di home directory.
+Binary tersebut akan:
+- Connect ke localhost pada port yang kita tentukan
+- Membaca 1 baris dari koneksi tersebut
+- Membandingkan dengan password bandit20
+- Jika cocok → mengirim password bandit21
 ```
-
-Keyword:
-
-* cron
-* scheduled task
-* privilege separation
-* script automation
 
 Artinya:
 
-Kita tidak menjalankan programnya.
-Program dijalankan otomatis oleh sistem.
+* Kita harus membuat server listener sendiri.
+* Binary akan menjadi client.
+* Kita kirim password level sebelumnya.
+* Jika benar → dia kirim password level berikutnya.
 
-Tugas kita:
+Konsep:
 
-* Cari script yang dijalankan
-* Analisa apa yang dilakukan
-* Ambil password
+* setuid
+* local socket communication
+* netcat listener
+* authentication via network
 
 ---
 
 ## 🔐 Login
 
 ```bash
-ssh bandit21@bandit.labs.overthewire.org -p 2220
+ssh bandit20@bandit.labs.overthewire.org -p 2220
 ```
 
 Password level sebelumnya:
+
+```
+GbKksEFF4yrVs6il55v6gwY5aVJe5rj0
+```
+
+---
+
+## 1️⃣ Lihat Isi Home
+
+```bash
+ls -la
+```
+
+Ada binary:
+
+```
+bandit20-do
+```
+
+Jalankan tanpa argumen:
+
+```bash
+./bandit20-do
+```
+
+Output:
+
+```
+Run a command as another user.
+```
+
+Binary yang kita butuhkan adalah:
+
+```
+suconnect
+```
+
+Cek lagi isi directory — ada binary lain:
+
+```
+suconnect
+```
+
+Jalankan tanpa argumen:
+
+```bash
+./suconnect
+```
+
+Output:
+
+```
+Usage: ./suconnect <port>
+```
+
+Jelas.
+
+---
+
+## 🎯 Strategi
+
+1. Buka listener dengan `nc`
+2. Jalankan `suconnect` agar connect ke listener
+3. Kirim password bandit20
+4. Terima password bandit21
+
+Butuh 2 terminal.
+
+---
+
+## 2️⃣ Terminal 1 — Listener
+
+Pilih port bebas, misalnya 1234:
+
+```bash
+nc -lvp 1234
+```
+
+Listener siap menerima koneksi.
+
+---
+
+## 3️⃣ Terminal 2 — Jalankan suconnect
+
+```bash
+./suconnect 1234
+```
+
+Binary akan connect ke localhost:1234.
+
+---
+
+## 4️⃣ Kirim Password Bandit20
+
+Di terminal listener (Terminal 1), setelah koneksi masuk,
+kirim:
+
+```
+GbKksEFF4yrVs6il55v6gwY5aVJe5rj0
+```
+
+Tekan Enter.
+
+---
+
+## 5️⃣ Response
+
+Jika password benar, akan muncul:
+
+```
+Correct!
+<password_level_21>
+```
+
+Output yang didapat:
 
 ```
 gE269g2h3mw3pwgrj0HaUoqen1c9DGr
@@ -47,177 +162,61 @@ gE269g2h3mw3pwgrj0HaUoqen1c9DGr
 
 ---
 
-## 1️⃣ Cek Konfigurasi Cron
+## 🔎 Alternatif 1-Line
 
-Masuk ke directory cron:
-
-```bash
-cd /etc/cron.d
-ls -la
-```
-
-Ada file:
-
-```
-cronjob_bandit22
-```
-
-Buka:
+Bisa juga pakai:
 
 ```bash
-cat cronjob_bandit22
-```
-
-Isi:
-
-```
-* * * * * bandit22 /usr/bin/cronjob_bandit22.sh &> /dev/null
-```
-
-Analisis:
-
-```
-* * * * *
-```
-
-Artinya:
-
-* Jalan setiap menit
-* Sebagai user bandit22
-* Menjalankan script `/usr/bin/cronjob_bandit22.sh`
-
----
-
-## 2️⃣ Analisa Script
-
-Buka script:
-
-```bash
-cat /usr/bin/cronjob_bandit22.sh
-```
-
-Isi kurang lebih:
-
-```bash
-#!/bin/bash
-cat /etc/bandit_pass/bandit22 > /tmp/<random_string>
-```
-
-Artinya:
-
-* Script membaca password bandit22
-* Menyimpannya ke file di /tmp
-* File name statis (hardcoded)
-
-Misalnya:
-
-```
-/tmp/t0odsS90RqQh9aMc25hpAoZKf7F9
-```
-
----
-
-## 3️⃣ Ambil Password
-
-Tunggu maksimal 1 menit (karena cron tiap menit).
-
-Lalu:
-
-```bash
-cat /tmp/t0odsS90RqQh9aMc25hpAoZKf7F9
-```
-
-Output:
-
-```
-Yk7owGAcWjwVMrwTseJ8w7W0iLLL
+echo "GbKksEFF4yrVs6il55v6gwY5aVJe5rj0" | nc -lvp 1234 &
+./suconnect 1234
 ```
 
 ---
 
 ## 🧠 Konsep yang Dipelajari
 
-### 1️⃣ Cron Job Enumeration
+### 1️⃣ Setuid + Network Interaction
 
-Lokasi penting:
+Binary berjalan sebagai bandit21.
+Dia membaca input dari socket.
+
+---
+
+### 2️⃣ Localhost Networking
+
+Client → localhost
+Server → kita buat sendiri
+
+---
+
+### 3️⃣ Flow Proses
 
 ```
-/etc/cron.d/
-/etc/crontab
-/var/spool/cron
+Kita buat listener
+→ suconnect connect ke listener
+→ Kita kirim password bandit20
+→ suconnect validasi
+→ Jika cocok → kirim password bandit21
 ```
 
 ---
 
-### 2️⃣ Privilege Context
-
-Script dijalankan sebagai:
-
-```
-bandit22
-```
-
-Artinya dia bisa membaca:
-
-```
-/etc/bandit_pass/bandit22
-```
-
-Tapi kita (bandit21) tidak bisa.
-
----
-
-### 3️⃣ Data Leak via World-Readable Temp File
-
-Script menyimpan output ke:
-
-```
-/tmp/
-```
-
-Directory ini:
-
-* World readable
-* World writable
-
-Jika file permission default → bisa dibaca user lain.
-
----
-
-### 4️⃣ Flow Eksploitasi
-
-```
-Cron jalan tiap menit
-→ Script baca password bandit22
-→ Simpan ke /tmp
-→ Kita baca file itu
-→ Ambil password
-```
-
----
-
-## ⚠ Kenapa Ini Vulnerable?
+### 4️⃣ Kenapa Ini Aman?
 
 Karena:
 
-* Sensitive data disimpan di /tmp
-* Tanpa permission hardening
-* Tanpa randomisasi per-execution
-* Tanpa cleanup
-
-Di dunia nyata ini disebut:
-
-> Insecure temporary file handling
+* Password hanya dicek secara lokal
+* Tidak exposed ke jaringan luar
+* Service tidak open ke publik
 
 ---
 
 ## Ringkasan Brutal
 
-* Enumerasi cron.
-* Temukan script.
-* Baca script.
-* Identifikasi output file.
-* Tunggu cron run.
-* Ambil password.
+* Buat listener.
+* Jalankan suconnect.
+* Kirim password lama.
+* Terima password baru.
+* Selesai.
 
-Ini latihan reconnaissance + privilege boundary via automation leak.
+Ini latihan memahami interaksi network lokal + privilege boundary via setuid.

@@ -1,176 +1,156 @@
 .# Over The Wired
 
-## OverTheWire — Bandit Level 18 → 19
+## OverTheWire — Bandit Level 17 → 18
 
 ---
 
 ## 🧠 Deskripsi Level
 
-Instruksi level:
+Instruksi:
 
 ```
-Password untuk level berikutnya tersimpan dalam file readme di home directory.
-Namun .bashrc telah dimodifikasi agar kamu langsung logout saat login via SSH.
+Ada 2 file di home directory:
+- passwords.old
+- passwords.new
+
+Password level berikutnya ada di passwords.new
+dan hanya 1 baris yang berbeda antara kedua file tersebut.
 ```
 
 Artinya:
 
-* File ada.
-* Permission benar.
-* Masalahnya bukan akses.
-* Masalahnya ada di shell startup.
+* Kita tidak perlu brute force.
+* Tidak perlu decrypt.
+* Cukup cari perbedaannya.
 
-Ini bukan privilege issue.
-Ini bypass shell behavior.
+Tool yang dipakai:
+
+```
+diff
+```
 
 ---
 
-## 🔐 Login Awal
+## 🔐 Login
 
 ```bash
-ssh bandit18@bandit.labs.overthewire.org -p 2220
+ssh bandit17@bandit.labs.overthewire.org -p 2220
 ```
 
-Masukkan password level sebelumnya.
-
-Hasil:
+Password sebelumnya:
 
 ```
-Connection closed.
+xLYVMN9WE5zQ5vHacb0sZEVqbrp7nBTn
 ```
-
-Langsung logout.
-
-Kenapa?
-
-Karena `.bashrc` dimodifikasi untuk:
-
-```bash
-exit
-```
-
-Saat shell interactive berjalan → langsung keluar.
 
 ---
 
-## 🎯 Tujuan
-
-Bypass `.bashrc`.
-
-Intinya:
-
-> Jangan biarkan shell interactive berjalan.
-
----
-
-## 🔥 Solusi 1 — Jalankan Command Langsung Saat SSH
-
-SSH punya fitur:
-
-```
-ssh user@host "command"
-```
-
-Command akan dijalankan tanpa membuka shell interactive penuh.
-
-Gunakan:
+## 1️⃣ Lihat Isi Directory
 
 ```bash
-ssh bandit18@bandit.labs.overthewire.org -p 2220 "cat readme"
+ls
 ```
-
-Masukkan password level 18.
 
 Output:
 
 ```
-IueksS7Ubh8G3DCwVzrdRAvoWg3M5x
+passwords.old
+passwords.new
 ```
 
 ---
 
-## 🧪 Alternatif Metode
-
-### 1. Disable pseudo-terminal
+## 2️⃣ Bandingkan Kedua File
 
 ```bash
-ssh -T bandit18@bandit.labs.overthewire.org -p 2220 cat readme
+diff passwords.old passwords.new
 ```
 
-`-T` → disable TTY allocation.
+Output:
+
+```
+< kfBf3Yk5PBRwujdtb8B7S5cYsd
+---
+> 8SB5aBjkxIrZkJQkD7aQ9nNwQpr
+```
+
+Penjelasan:
+
+* `<` = baris dari file pertama (old)
+* `>` = baris dari file kedua (new)
+
+Karena password level berikutnya ada di `passwords.new`,
+maka yang kita ambil adalah:
+
+```
+8SB5aBjkxIrZkJQkD7aQ9nNwQpr
+```
 
 ---
 
-### 2. Gunakan shell berbeda
-
-```bash
-ssh bandit18@bandit.labs.overthewire.org -p 2220 /bin/sh
-```
-
-Kadang bisa bypass jika .bashrc hanya untuk bash.
-
----
-
-### 3. Gunakan `-t` untuk force command
-
-```bash
-ssh -t bandit18@bandit.labs.overthewire.org -p 2220 "cat readme"
-```
-
----
-
-## 📌 Alasan
-
-Karena:
-
-* `.bashrc` dijalankan hanya saat interactive shell.
-* SSH remote command **tidak menjalankan interactive login shell biasa**.
-* Jadi script logout tidak sempat dieksekusi sebelum command berjalan.
-
-Flow normal:
+# ✅ Credential Level Berikutnya
 
 ```
-SSH connect
-→ start interactive bash
-→ .bashrc
-→ exit
+Username: bandit18
+Password: 8SB5aBjkxIrZkJQkD7aQ9nNwQpr
 ```
-
-Flow bypass:
-
-```
-SSH connect
-→ execute remote command
-→ output
-→ disconnect
-```
-
-Tidak ada interactive session penuh.
 
 ---
 
 ## 🧠 Konsep yang Dipelajari
 
-* Cara kerja SSH remote command execution
-* Perbedaan interactive vs non-interactive shell
-* Startup file bash (.bashrc, .profile)
-* Cara bypass restriction berbasis shell
+### 1️⃣ diff
+
+Tool sederhana untuk membandingkan file.
+
+Syntax dasar:
+
+```bash
+diff file1 file2
+```
+
+Simbol:
+
+```
+<  → dari file pertama
+>  → dari file kedua
+```
 
 ---
 
-## Ringkasan Brutal
+### 2️⃣ Analisa Delta
 
-Masalahnya bukan permission.
-Masalahnya environment.
+Kita tidak perlu membaca seluruh file.
 
-Solusinya:
+Cukup identifikasi perubahan.
 
-Jangan main sesuai aturan yang dibuat.
+Di dunia nyata ini digunakan untuk:
 
-Eksekusi command langsung → ambil file → selesai.
+* Audit perubahan konfigurasi
+* Review source code
+* Detect tampering
+* Incident response
 
 ---
 
-Level ini mengajarkan mindset penting:
+## ⚠ Catatan
 
-> Jika dibatasi di layer tertentu, pindah layer.
+Jika setelah login ke bandit18 muncul:
+
+```
+ByeBye
+```
+
+Itu bukan error level ini.
+
+Itu bagian dari level berikutnya (Level 18 → 19).
+
+Jadi jangan panik.
+
+---
+
+## Ringkasan
+
+* Gunakan diff.
+* Ambil baris yang berbeda di file baru.
+* Itulah password.

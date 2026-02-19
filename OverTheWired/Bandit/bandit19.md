@@ -1,201 +1,176 @@
 .# Over The Wired
 
-## OverTheWire — Bandit Level 19 → 20
+## OverTheWire — Bandit Level 18 → 19
 
 ---
 
 ## 🧠 Deskripsi Level
 
-Instruksi:
+Instruksi level:
 
 ```
-Untuk mendapatkan akses ke level berikutnya,
-gunakan setuid binary di home directory.
-
-Password level berikutnya ada di /etc/bandit_pass
-setelah kamu menggunakan setuid binary tersebut.
+Password untuk level berikutnya tersimpan dalam file readme di home directory.
+Namun .bashrc telah dimodifikasi agar kamu langsung logout saat login via SSH.
 ```
 
-Keyword penting:
+Artinya:
 
-* **setuid binary**
-* Eksekusi sebagai user lain
-* Privilege escalation terbatas
+* File ada.
+* Permission benar.
+* Masalahnya bukan akses.
+* Masalahnya ada di shell startup.
+
+Ini bukan privilege issue.
+Ini bypass shell behavior.
 
 ---
 
-## 🔐 Login
+## 🔐 Login Awal
 
 ```bash
-ssh bandit19@bandit.labs.overthewire.org -p 2220
+ssh bandit18@bandit.labs.overthewire.org -p 2220
 ```
 
 Masukkan password level sebelumnya.
 
----
+Hasil:
 
-## 1️⃣ Cek Isi Home Directory
+```
+Connection closed.
+```
+
+Langsung logout.
+
+Kenapa?
+
+Karena `.bashrc` dimodifikasi untuk:
 
 ```bash
-ls -la
+exit
 ```
 
-Output menunjukkan binary:
-
-```
--rwsr-x--- 1 bandit20 bandit19 ... bandit20-do
-```
-
-Perhatikan:
-
-```
-s
-```
-
-Itu berarti **setuid bit aktif**.
-
-Artinya:
-
-> Program ini akan berjalan dengan UID pemilik file (bandit20),
-> bukan UID kita (bandit19).
+Saat shell interactive berjalan → langsung keluar.
 
 ---
 
-## 2️⃣ Jalankan Tanpa Argumen
+## 🎯 Tujuan
+
+Bypass `.bashrc`.
+
+Intinya:
+
+> Jangan biarkan shell interactive berjalan.
+
+---
+
+## 🔥 Solusi 1 — Jalankan Command Langsung Saat SSH
+
+SSH punya fitur:
+
+```
+ssh user@host "command"
+```
+
+Command akan dijalankan tanpa membuka shell interactive penuh.
+
+Gunakan:
 
 ```bash
-./bandit20-do
+ssh bandit18@bandit.labs.overthewire.org -p 2220 "cat readme"
 ```
+
+Masukkan password level 18.
 
 Output:
 
 ```
-Run a command as another user.
-Example: ./bandit20-do id
+IueksS7Ubh8G3DCwVzrdRAvoWg3M5x
 ```
-
-Jelas.
-
-Binary ini menjalankan command sebagai user lain.
 
 ---
 
-## 3️⃣ Verifikasi UID
+## 🧪 Alternatif Metode
+
+### 1. Disable pseudo-terminal
 
 ```bash
-./bandit20-do id
+ssh -T bandit18@bandit.labs.overthewire.org -p 2220 cat readme
 ```
 
-Output:
-
-```
-uid=11020(bandit20) gid=11019(bandit19)
-```
-
-Berarti:
-
-* Effective UID = bandit20
-* Kita sekarang bisa akses file milik bandit20
+`-T` → disable TTY allocation.
 
 ---
 
-## 4️⃣ Ambil Password Level 20
-
-Password tersimpan di:
-
-```
-/etc/bandit_pass/bandit20
-```
-
-Normalnya bandit19 tidak bisa baca.
-
-Gunakan setuid binary:
+### 2. Gunakan shell berbeda
 
 ```bash
-./bandit20-do cat /etc/bandit_pass/bandit20
+ssh bandit18@bandit.labs.overthewire.org -p 2220 /bin/sh
 ```
 
-Output:
+Kadang bisa bypass jika .bashrc hanya untuk bash.
+
+---
+
+### 3. Gunakan `-t` untuk force command
+
+```bash
+ssh -t bandit18@bandit.labs.overthewire.org -p 2220 "cat readme"
+```
+
+---
+
+## 📌 Alasan
+
+Karena:
+
+* `.bashrc` dijalankan hanya saat interactive shell.
+* SSH remote command **tidak menjalankan interactive login shell biasa**.
+* Jadi script logout tidak sempat dieksekusi sebelum command berjalan.
+
+Flow normal:
 
 ```
-GbKksEFF4yrVs6il55v6gwY5aVJe5rj0
+SSH connect
+→ start interactive bash
+→ .bashrc
+→ exit
 ```
+
+Flow bypass:
+
+```
+SSH connect
+→ execute remote command
+→ output
+→ disconnect
+```
+
+Tidak ada interactive session penuh.
 
 ---
 
 ## 🧠 Konsep yang Dipelajari
 
-### 1️⃣ Setuid Bit
-
-Permission:
-
-```
--rwsr-x---
-```
-
-`s` pada owner → setuid aktif.
-
-Artinya:
-
-```
-Program berjalan dengan effective UID pemilik file.
-```
-
----
-
-### 2️⃣ Privilege Escalation Terbatas
-
-Kita tidak menjadi root.
-
-Kita hanya menjalankan binary
-dengan privilege user tertentu.
-
-Ini contoh klasik:
-
-* Misconfigured setuid
-* Wrapper privilege
-* Command proxy
-
----
-
-### 3️⃣ Cara Kerja
-
-Flow:
-
-```
-User bandit19
-→ Execute setuid binary
-→ Effective UID berubah ke bandit20
-→ Jalankan command
-→ Bisa baca file restricted
-```
-
----
-
-## ⚠ Kenapa Ini Penting di Dunia Nyata?
-
-Setuid binary yang salah konfigurasi
-bisa menyebabkan:
-
-* Privilege escalation
-* Command injection
-* Full system compromise
-
-Makanya binary setuid harus:
-
-* Sangat terbatas
-* Tidak menerima input sembarangan
-* Tidak vulnerable terhadap injection
+* Cara kerja SSH remote command execution
+* Perbedaan interactive vs non-interactive shell
+* Startup file bash (.bashrc, .profile)
+* Cara bypass restriction berbasis shell
 
 ---
 
 ## Ringkasan Brutal
 
-* Lihat permission.
-* Temukan setuid.
-* Jalankan binary.
-* Escalate ke user target.
-* Baca file password.
-* Selesai.
+Masalahnya bukan permission.
+Masalahnya environment.
 
-Ini basic privilege escalation via setuid.
+Solusinya:
+
+Jangan main sesuai aturan yang dibuat.
+
+Eksekusi command langsung → ambil file → selesai.
+
+---
+
+Level ini mengajarkan mindset penting:
+
+> Jika dibatasi di layer tertentu, pindah layer.

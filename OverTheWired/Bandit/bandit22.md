@@ -1,6 +1,6 @@
 .# Over The Wired
 
-## OverTheWire — Bandit Level 22 → 23
+## OverTheWire — Bandit Level 21 → 22
 
 ---
 
@@ -9,31 +9,125 @@
 Instruksi:
 
 ```
-Sebuah program berjalan otomatis melalui cron.
-Lihat konfigurasi di /etc/cron.d/ untuk mengetahui apa yang dijalankan.
+Sebuah program dijalankan otomatis secara berkala oleh cron.
+Lihat konfigurasi di /etc/cron.d/ untuk mengetahui command yang dieksekusi.
 ```
 
-Hint tambahan:
+Keyword:
 
-> Script shell lain yang ditulis user biasanya sangat membantu.
-> Jika kamu tidak paham, jalankan manual untuk melihat debug output.
+* cron
+* scheduled task
+* privilege separation
+* script automation
 
 Artinya:
 
-* Enumerasi cron lagi.
-* Analisa script.
-* Replikasi logikanya.
-* Ambil password.
+Kita tidak menjalankan programnya.
+Program dijalankan otomatis oleh sistem.
+
+Tugas kita:
+
+* Cari script yang dijalankan
+* Analisa apa yang dilakukan
+* Ambil password
 
 ---
 
 ## 🔐 Login
 
 ```bash
-ssh bandit22@bandit.labs.overthewire.org -p 2220
+ssh bandit21@bandit.labs.overthewire.org -p 2220
 ```
 
-Password sebelumnya:
+Password level sebelumnya:
+
+```
+gE269g2h3mw3pwgrj0HaUoqen1c9DGr
+```
+
+---
+
+## 1️⃣ Cek Konfigurasi Cron
+
+Masuk ke directory cron:
+
+```bash
+cd /etc/cron.d
+ls -la
+```
+
+Ada file:
+
+```
+cronjob_bandit22
+```
+
+Buka:
+
+```bash
+cat cronjob_bandit22
+```
+
+Isi:
+
+```
+* * * * * bandit22 /usr/bin/cronjob_bandit22.sh &> /dev/null
+```
+
+Analisis:
+
+```
+* * * * *
+```
+
+Artinya:
+
+* Jalan setiap menit
+* Sebagai user bandit22
+* Menjalankan script `/usr/bin/cronjob_bandit22.sh`
+
+---
+
+## 2️⃣ Analisa Script
+
+Buka script:
+
+```bash
+cat /usr/bin/cronjob_bandit22.sh
+```
+
+Isi kurang lebih:
+
+```bash
+#!/bin/bash
+cat /etc/bandit_pass/bandit22 > /tmp/<random_string>
+```
+
+Artinya:
+
+* Script membaca password bandit22
+* Menyimpannya ke file di /tmp
+* File name statis (hardcoded)
+
+Misalnya:
+
+```
+/tmp/t0odsS90RqQh9aMc25hpAoZKf7F9
+```
+
+---
+
+## 3️⃣ Ambil Password
+
+Tunggu maksimal 1 menit (karena cron tiap menit).
+
+Lalu:
+
+```bash
+cat /tmp/t0odsS90RqQh9aMc25hpAoZKf7F9
+```
+
+Output:
 
 ```
 Yk7owGAcWjwVMrwTseJ8w7W0iLLL
@@ -41,215 +135,89 @@ Yk7owGAcWjwVMrwTseJ8w7W0iLLL
 
 ---
 
-## 1️⃣ Cek Cron
-
-```bash
-cd /etc/cron.d
-ls
-```
-
-Ada file:
-
-```
-cronjob_bandit23
-```
-
-Buka:
-
-```bash
-cat cronjob_bandit23
-```
-
-Isi:
-
-```
-* * * * * bandit23 /usr/bin/cronjob_bandit23.sh &> /dev/null
-```
-
-Artinya:
-
-* Jalan setiap menit
-* Sebagai user bandit23
-* Menjalankan script tertentu
-
----
-
-## 2️⃣ Analisa Script
-
-```bash
-cat /usr/bin/cronjob_bandit23.sh
-```
-
-Isi penting:
-
-```bash
-myname=$(whoami)
-mytarget=$(echo "I am user $myname" | md5sum | cut -d ' ' -f 1)
-cat /etc/bandit_pass/$myname > /tmp/$mytarget
-```
-
----
-
-## 🔎 Breakdown Logika
-
-### 1️⃣ Simpan username
-
-```bash
-myname=$(whoami)
-```
-
-Karena dijalankan oleh cron sebagai:
-
-```
-bandit23
-```
-
-Maka:
-
-```
-myname = bandit23
-```
-
----
-
-### 2️⃣ Generate Hash
-
-```bash
-echo "I am user bandit23" | md5sum
-```
-
-Hasil:
-
-```
-8ca319486bfbbc3663ea0fbe81326349
-```
-
-(ambil bagian hash saja dengan `cut`)
-
----
-
-### 3️⃣ Simpan Password
-
-Script melakukan:
-
-```bash
-cat /etc/bandit_pass/bandit23 > /tmp/8ca319486bfbbc3663ea0fbe81326349
-```
-
-Artinya:
-
-Password bandit23 akan tersimpan di:
-
-```
-/tmp/8ca319486bfbbc3663ea0fbe81326349
-```
-
----
-
-## 3️⃣ Replikasi Manual
-
-Sebagai bandit22 kita bisa hitung sendiri:
-
-```bash
-echo "I am user bandit23" | md5sum | cut -d ' ' -f1
-```
-
-Hasil:
-
-```
-8ca319486bfbbc3663ea0fbe81326349
-```
-
----
-
-## 4️⃣ Ambil Password
-
-Tunggu maksimal 1 menit (cron interval).
-
-Lalu:
-
-```bash
-cat /tmp/8ca319486bfbbc3663ea0fbe81326349
-```
-
-Output:
-
-```
-jc1udXuA1tiHqjIsL8yaapX5XIAI6i0n
-```
-
 ## 🧠 Konsep yang Dipelajari
 
-### 1️⃣ Analisa Script Manual
+### 1️⃣ Cron Job Enumeration
 
-Jika tidak paham, jalankan bagian per bagian:
+Lokasi penting:
 
-```bash
-whoami
-echo "I am user bandit23" | md5sum
+```
+/etc/cron.d/
+/etc/crontab
+/var/spool/cron
 ```
 
 ---
 
-### 2️⃣ Hash Deterministic
+### 2️⃣ Privilege Context
 
-Input tetap → hash tetap.
+Script dijalankan sebagai:
 
-Script tidak menggunakan random value.
+```
+bandit22
+```
 
-Artinya:
+Artinya dia bisa membaca:
 
-File path bisa diprediksi.
+```
+/etc/bandit_pass/bandit22
+```
+
+Tapi kita (bandit21) tidak bisa.
 
 ---
 
-### 3️⃣ Data Leak via /tmp
+### 3️⃣ Data Leak via World-Readable Temp File
 
-Sensitive data disimpan di:
+Script menyimpan output ke:
 
 ```
-/tmp/<predictable_hash>
+/tmp/
 ```
 
-Jika nama file bisa dihitung → bisa diambil.
+Directory ini:
+
+* World readable
+* World writable
+
+Jika file permission default → bisa dibaca user lain.
 
 ---
 
-### 4️⃣ Flow Serangan
+### 4️⃣ Flow Eksploitasi
 
 ```
-Cron run as bandit23
-→ Generate md5 dari string tetap
-→ Copy password ke /tmp/hash
-→ Kita hitung hash yang sama
-→ Baca file
-→ Dapat password
+Cron jalan tiap menit
+→ Script baca password bandit22
+→ Simpan ke /tmp
+→ Kita baca file itu
+→ Ambil password
 ```
 
 ---
 
-## ⚠ Vulnerability Pattern
+## ⚠ Kenapa Ini Vulnerable?
 
-Ini contoh klasik:
+Karena:
 
-* Predictable filename
-* Insecure temporary storage
-* No permission hardening
-* No cleanup
+* Sensitive data disimpan di /tmp
+* Tanpa permission hardening
+* Tanpa randomisasi per-execution
+* Tanpa cleanup
 
-Di dunia nyata ini bisa disebut:
+Di dunia nyata ini disebut:
 
-> Predictable temporary file disclosure
+> Insecure temporary file handling
 
 ---
 
 ## Ringkasan Brutal
 
 * Enumerasi cron.
+* Temukan script.
 * Baca script.
-* Pahami logika.
-* Hitung hash.
-* Ambil file.
-* Selesai.
+* Identifikasi output file.
+* Tunggu cron run.
+* Ambil password.
 
-Ini latihan analisa script + prediksi output deterministik.
+Ini latihan reconnaissance + privilege boundary via automation leak.
