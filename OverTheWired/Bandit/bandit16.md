@@ -1,4 +1,4 @@
-.# Over The Wired
+# Over The Wired
 
 ## OverTheWire — Bandit Level 15 → 16
 

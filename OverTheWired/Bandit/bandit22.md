@@ -1,10 +1,10 @@
-.# Over The Wired
+# Over The Wired
 
 ## OverTheWire — Bandit Level 21 → 22
 
 ---
 
-## 🧠 Deskripsi Level
+## Deskripsi Level
 
 Instruksi:
 
@@ -33,7 +33,7 @@ Tugas kita:
 
 ---
 
-## 🔐 Login
+## Login
 
 ```bash
 ssh bandit21@bandit.labs.overthewire.org -p 2220
@@ -47,7 +47,7 @@ gE269g2h3mw3pwgrj0HaUoqen1c9DGr
 
 ---
 
-## 1️⃣ Cek Konfigurasi Cron
+## 1. Cek Konfigurasi Cron
 
 Masuk ke directory cron:
 
@@ -88,7 +88,7 @@ Artinya:
 
 ---
 
-## 2️⃣ Analisa Script
+## 2. Analisa Script
 
 Buka script:
 
@@ -117,7 +117,7 @@ Misalnya:
 
 ---
 
-## 3️⃣ Ambil Password
+## 3. Ambil Password
 
 Tunggu maksimal 1 menit (karena cron tiap menit).
 
@@ -135,9 +135,9 @@ Yk7owGAcWjwVMrwTseJ8w7W0iLLL
 
 ---
 
-## 🧠 Konsep yang Dipelajari
+## Konsep yang Dipelajari
 
-### 1️⃣ Cron Job Enumeration
+### 1. Cron Job Enumeration
 
 Lokasi penting:
 
@@ -149,7 +149,7 @@ Lokasi penting:
 
 ---
 
-### 2️⃣ Privilege Context
+### 2. Privilege Context
 
 Script dijalankan sebagai:
 
@@ -167,7 +167,7 @@ Tapi kita (bandit21) tidak bisa.
 
 ---
 
-### 3️⃣ Data Leak via World-Readable Temp File
+### 3. Data Leak via World-Readable Temp File
 
 Script menyimpan output ke:
 
@@ -184,7 +184,7 @@ Jika file permission default → bisa dibaca user lain.
 
 ---
 
-### 4️⃣ Flow Eksploitasi
+### 4. Flow Eksploitasi
 
 ```
 Cron jalan tiap menit
@@ -211,7 +211,7 @@ Di dunia nyata ini disebut:
 
 ---
 
-## Ringkasan Brutal
+## Ringkasan
 
 * Enumerasi cron.
 * Temukan script.

@@ -1,10 +1,10 @@
-.# Over The Wired
+# Over The Wired
 
 ## OverTheWire — Bandit Level 18 → 19
 
 ---
 
-## 🧠 Deskripsi Level
+## Deskripsi Level
 
 Instruksi level:
 
@@ -25,7 +25,7 @@ Ini bypass shell behavior.
 
 ---
 
-## 🔐 Login Awal
+## Login Awal
 
 ```bash
 ssh bandit18@bandit.labs.overthewire.org -p 2220
@@ -53,7 +53,7 @@ Saat shell interactive berjalan → langsung keluar.
 
 ---
 
-## 🎯 Tujuan
+## Tujuan
 
 Bypass `.bashrc`.
 
@@ -63,7 +63,7 @@ Intinya:
 
 ---
 
-## 🔥 Solusi 1 — Jalankan Command Langsung Saat SSH
+## Solusi 1 — Jalankan Command Langsung Saat SSH
 
 SSH punya fitur:
 
@@ -149,7 +149,7 @@ Tidak ada interactive session penuh.
 
 ---
 
-## 🧠 Konsep yang Dipelajari
+## Konsep yang Dipelajari
 
 * Cara kerja SSH remote command execution
 * Perbedaan interactive vs non-interactive shell
@@ -158,7 +158,7 @@ Tidak ada interactive session penuh.
 
 ---
 
-## Ringkasan Brutal
+## Ringkasan
 
 Masalahnya bukan permission.
 Masalahnya environment.

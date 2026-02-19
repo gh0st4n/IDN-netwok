@@ -1,10 +1,10 @@
-.# Over The Wired
+# Over The Wired
 
 ## OverTheWire — Bandit Level 17 → 18
 
 ---
 
-## 🧠 Deskripsi Level
+## Deskripsi Level
 
 Instruksi:
 
@@ -31,7 +31,7 @@ diff
 
 ---
 
-## 🔐 Login
+## Login
 
 ```bash
 ssh bandit17@bandit.labs.overthewire.org -p 2220
@@ -45,7 +45,7 @@ xLYVMN9WE5zQ5vHacb0sZEVqbrp7nBTn
 
 ---
 
-## 1️⃣ Lihat Isi Directory
+## 1. Lihat Isi Directory
 
 ```bash
 ls
@@ -60,7 +60,7 @@ passwords.new
 
 ---
 
-## 2️⃣ Bandingkan Kedua File
+## 2. Bandingkan Kedua File
 
 ```bash
 diff passwords.old passwords.new
@@ -97,9 +97,9 @@ Password: 8SB5aBjkxIrZkJQkD7aQ9nNwQpr
 
 ---
 
-## 🧠 Konsep yang Dipelajari
+## Konsep yang Dipelajari
 
-### 1️⃣ diff
+### 1. diff
 
 Tool sederhana untuk membandingkan file.
 
@@ -118,7 +118,7 @@ Simbol:
 
 ---
 
-### 2️⃣ Analisa Delta
+### 2. Analisa Delta
 
 Kita tidak perlu membaca seluruh file.
 

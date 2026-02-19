@@ -4,7 +4,7 @@
 
 ---
 
-## 🧠 Deskripsi Level
+## Deskripsi Level
 
 Instruksi:
 
@@ -31,7 +31,7 @@ Kita harus:
 
 ---
 
-## 🔐 Login
+## Login
 
 ```bash
 ssh bandit23@bandit.labs.overthewire.org -p 2220
@@ -45,7 +45,7 @@ jc1udXuA1tiHqjIsL8yaapX5XIAI6i0n
 
 ---
 
-## 1️⃣ Enumerasi Cron
+## 1. Enumerasi Cron
 
 ```bash
 cd /etc/cron.d
@@ -78,7 +78,7 @@ Artinya:
 
 ---
 
-## 2️⃣ Analisa Script
+## 2. Analisa Script
 
 ```bash
 cat /usr/bin/cronjob_bandit24.sh
@@ -100,7 +100,7 @@ done
 
 ---
 
-## 🔎 Analisa
+## Analisa
 
 Script melakukan:
 
@@ -124,7 +124,7 @@ Cron akan:
 
 ---
 
-## 🎯 Strategi
+## Strategi
 
 Buat script yang:
 
@@ -139,7 +139,7 @@ Misalnya:
 
 ---
 
-## 3️⃣ Buat Script Payload
+## 3. Buat Script Payload
 
 Masuk ke spool:
 
@@ -164,7 +164,7 @@ Simpan.
 
 ---
 
-## 4️⃣ Set Permission
+## 4. Set Permission
 
 ```bash
 chmod 777 getpass.sh
@@ -176,7 +176,7 @@ Karena script hanya dijalankan jika executable.
 
 ---
 
-## 5️⃣ Tunggu Cron
+## 5. Tunggu Cron
 
 Cron berjalan setiap menit.
 
@@ -189,7 +189,7 @@ Script akan:
 
 ---
 
-## 6️⃣ Ambil Password
+## 6. Ambil Password
 
 ```bash
 cat /tmp/password24
@@ -203,18 +203,9 @@ UoMYTrfrBFHyQXmg6gzctqAwOmw1IohZ
 
 ---
 
-# ✅ Credential Level Berikutnya
+## Konsep yang Dipelajari
 
-```
-Username: bandit24
-Password: UoMYTrfrBFHyQXmg6gzctqAwOmw1IohZ
-```
-
----
-
-## 🧠 Konsep yang Dipelajari
-
-### 1️⃣ Privilege Escalation via Scheduled Execution
+### 1. Privilege Escalation via Scheduled Execution
 
 Kita tidak menjadi bandit24.
 
@@ -222,7 +213,7 @@ Kita memanfaatkan cron yang berjalan sebagai bandit24.
 
 ---
 
-### 2️⃣ Dropper / Payload Injection
+### 2. Dropper / Payload Injection
 
 Flow:
 
@@ -236,7 +227,7 @@ Tulis script
 
 ---
 
-### 3️⃣ Ephemeral Execution
+### 3. Ephemeral Execution
 
 Script:
 
@@ -249,7 +240,7 @@ Karena itu kita harus:
 
 ---
 
-### 4️⃣ Real-World Parallel
+### 4. Real-World Parallel
 
 Mirip dengan:
 

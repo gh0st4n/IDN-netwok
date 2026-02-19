@@ -1,10 +1,10 @@
-.# Over The Wired
+# Over The Wired
 
 ## OverTheWire — Bandit Level 20 → 21
 
 ---
 
-## 🧠 Deskripsi Level
+## Deskripsi Level
 
 Instruksi:
 
@@ -33,7 +33,7 @@ Konsep:
 
 ---
 
-## 🔐 Login
+## Login
 
 ```bash
 ssh bandit20@bandit.labs.overthewire.org -p 2220
@@ -47,7 +47,7 @@ GbKksEFF4yrVs6il55v6gwY5aVJe5rj0
 
 ---
 
-## 1️⃣ Lihat Isi Home
+## 1. Lihat Isi Home
 
 ```bash
 ls -la
@@ -99,7 +99,7 @@ Jelas.
 
 ---
 
-## 🎯 Strategi
+## Strategi
 
 1. Buka listener dengan `nc`
 2. Jalankan `suconnect` agar connect ke listener
@@ -110,7 +110,7 @@ Butuh 2 terminal.
 
 ---
 
-## 2️⃣ Terminal 1 — Listener
+## 2. Terminal 1 — Listener
 
 Pilih port bebas, misalnya 1234:
 
@@ -122,7 +122,7 @@ Listener siap menerima koneksi.
 
 ---
 
-## 3️⃣ Terminal 2 — Jalankan suconnect
+## 3. Terminal 2 — Jalankan suconnect
 
 ```bash
 ./suconnect 1234
@@ -132,7 +132,7 @@ Binary akan connect ke localhost:1234.
 
 ---
 
-## 4️⃣ Kirim Password Bandit20
+## 4. Kirim Password Bandit20
 
 Di terminal listener (Terminal 1), setelah koneksi masuk,
 kirim:
@@ -145,7 +145,7 @@ Tekan Enter.
 
 ---
 
-## 5️⃣ Response
+## 5. Response
 
 Jika password benar, akan muncul:
 
@@ -162,7 +162,7 @@ gE269g2h3mw3pwgrj0HaUoqen1c9DGr
 
 ---
 
-## 🔎 Alternatif 1-Line
+## Alternatif 1-Line
 
 Bisa juga pakai:
 
@@ -173,23 +173,23 @@ echo "GbKksEFF4yrVs6il55v6gwY5aVJe5rj0" | nc -lvp 1234 &
 
 ---
 
-## 🧠 Konsep yang Dipelajari
+## Konsep yang Dipelajari
 
-### 1️⃣ Setuid + Network Interaction
+### 1. Setuid + Network Interaction
 
 Binary berjalan sebagai bandit21.
 Dia membaca input dari socket.
 
 ---
 
-### 2️⃣ Localhost Networking
+### 2. Localhost Networking
 
 Client → localhost
 Server → kita buat sendiri
 
 ---
 
-### 3️⃣ Flow Proses
+### 3. Flow Proses
 
 ```
 Kita buat listener
@@ -201,7 +201,7 @@ Kita buat listener
 
 ---
 
-### 4️⃣ Kenapa Ini Aman?
+### 4. Kenapa Ini Aman?
 
 Karena:
 
@@ -211,7 +211,7 @@ Karena:
 
 ---
 
-## Ringkasan Brutal
+## Ringkasan
 
 * Buat listener.
 * Jalankan suconnect.

@@ -204,7 +204,3 @@ Tapi untuk solve level ini, tidak perlu.
 Level ini adalah transisi dari:
 
 Filesystem-based challenge → Network-based challenge
-
-Level berikutnya (15 → 16) mulai masuk TLS.
-
-Kalau mau lanjut, kita bedah juga.

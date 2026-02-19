@@ -1,10 +1,10 @@
-.# Over The Wired
+# Over The Wired
 
 ## OverTheWire — Bandit Level 19 → 20
 
 ---
 
-## 🧠 Deskripsi Level
+## Deskripsi Level
 
 Instruksi:
 
@@ -24,7 +24,7 @@ Keyword penting:
 
 ---
 
-## 🔐 Login
+## Login
 
 ```bash
 ssh bandit19@bandit.labs.overthewire.org -p 2220
@@ -34,7 +34,7 @@ Masukkan password level sebelumnya.
 
 ---
 
-## 1️⃣ Cek Isi Home Directory
+## 1. Cek Isi Home Directory
 
 ```bash
 ls -la
@@ -61,7 +61,7 @@ Artinya:
 
 ---
 
-## 2️⃣ Jalankan Tanpa Argumen
+## 2. Jalankan Tanpa Argumen
 
 ```bash
 ./bandit20-do
@@ -80,7 +80,7 @@ Binary ini menjalankan command sebagai user lain.
 
 ---
 
-## 3️⃣ Verifikasi UID
+## 3. Verifikasi UID
 
 ```bash
 ./bandit20-do id
@@ -99,7 +99,7 @@ Berarti:
 
 ---
 
-## 4️⃣ Ambil Password Level 20
+## 4. Ambil Password Level 20
 
 Password tersimpan di:
 
@@ -123,9 +123,9 @@ GbKksEFF4yrVs6il55v6gwY5aVJe5rj0
 
 ---
 
-## 🧠 Konsep yang Dipelajari
+## Konsep yang Dipelajari
 
-### 1️⃣ Setuid Bit
+### 1. Setuid Bit
 
 Permission:
 
@@ -143,7 +143,7 @@ Program berjalan dengan effective UID pemilik file.
 
 ---
 
-### 2️⃣ Privilege Escalation Terbatas
+### 2. Privilege Escalation Terbatas
 
 Kita tidak menjadi root.
 
@@ -158,7 +158,7 @@ Ini contoh klasik:
 
 ---
 
-### 3️⃣ Cara Kerja
+### 3. Cara Kerja
 
 Flow:
 
@@ -189,7 +189,7 @@ Makanya binary setuid harus:
 
 ---
 
-## Ringkasan Brutal
+## Ringkasan
 
 * Lihat permission.
 * Temukan setuid.

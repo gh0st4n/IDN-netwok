@@ -1,4 +1,4 @@
-.# Over The Wired
+# Over The Wired
 
 ## OverTheWire — Bandit Level 16 → 17
 
@@ -24,7 +24,7 @@ Beberapa port menggunakan SSL
 
 ---
 
-## 🔐 Login Awal
+## Login Awal
 
 ```bash
 ssh bandit16@bandit.labs.overthewire.org -p 2220
@@ -135,17 +135,17 @@ Output menunjukkan perbedaan:
 > xLYVMN9WE5zQ5vHacb0sZEVqbrp7nBTn
 ```
 
-## 🧠 Konsep yang Dipelajari
+## Konsep yang Dipelajari
 
-### 1️⃣ Recon Dulu, Jangan Asumsi
+### 1. Recon Dulu, Jangan Asumsi
 
 Scan → identifikasi → validasi.
 
-### 2️⃣ SSL ≠ Plain TCP
+### 2. SSL ≠ Plain TCP
 
 `nc` gagal karena service mengharapkan TLS ClientHello.
 
-### 3️⃣ TLS Flow
+### 3. TLS Flow
 
 ```
 TCP connect
@@ -155,14 +155,14 @@ TCP connect
 → Terima private key
 ```
 
-### 4️⃣ SSH Key Auth
+### 4. SSH Key Auth
 
 ```
 ssh -i key user@host
 chmod 600 key
 ```
 
-### 5️⃣ diff untuk Analisis Perubahan
+### 5. diff untuk Analisis Perubahan
 
 Tool simpel, powerful untuk cari delta.
 

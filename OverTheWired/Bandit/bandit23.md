@@ -1,10 +1,10 @@
-.# Over The Wired
+# Over The Wired
 
 ## OverTheWire — Bandit Level 22 → 23
 
 ---
 
-## 🧠 Deskripsi Level
+## Deskripsi Level
 
 Instruksi:
 
@@ -27,7 +27,7 @@ Artinya:
 
 ---
 
-## 🔐 Login
+## Login
 
 ```bash
 ssh bandit22@bandit.labs.overthewire.org -p 2220
@@ -41,7 +41,7 @@ Yk7owGAcWjwVMrwTseJ8w7W0iLLL
 
 ---
 
-## 1️⃣ Cek Cron
+## 1. Cek Cron
 
 ```bash
 cd /etc/cron.d
@@ -74,7 +74,7 @@ Artinya:
 
 ---
 
-## 2️⃣ Analisa Script
+## 2. Analisa Script
 
 ```bash
 cat /usr/bin/cronjob_bandit23.sh
@@ -90,9 +90,9 @@ cat /etc/bandit_pass/$myname > /tmp/$mytarget
 
 ---
 
-## 🔎 Breakdown Logika
+## Breakdown Logika
 
-### 1️⃣ Simpan username
+### 1. Simpan username
 
 ```bash
 myname=$(whoami)
@@ -112,7 +112,7 @@ myname = bandit23
 
 ---
 
-### 2️⃣ Generate Hash
+### 2. Generate Hash
 
 ```bash
 echo "I am user bandit23" | md5sum
@@ -128,7 +128,7 @@ Hasil:
 
 ---
 
-### 3️⃣ Simpan Password
+### 3. Simpan Password
 
 Script melakukan:
 
@@ -146,7 +146,7 @@ Password bandit23 akan tersimpan di:
 
 ---
 
-## 3️⃣ Replikasi Manual
+## 3. Replikasi Manual
 
 Sebagai bandit22 kita bisa hitung sendiri:
 
@@ -162,7 +162,7 @@ Hasil:
 
 ---
 
-## 4️⃣ Ambil Password
+## 4. Ambil Password
 
 Tunggu maksimal 1 menit (cron interval).
 
@@ -178,9 +178,9 @@ Output:
 jc1udXuA1tiHqjIsL8yaapX5XIAI6i0n
 ```
 
-## 🧠 Konsep yang Dipelajari
+## Konsep yang Dipelajari
 
-### 1️⃣ Analisa Script Manual
+### 1. Analisa Script Manual
 
 Jika tidak paham, jalankan bagian per bagian:
 
@@ -191,7 +191,7 @@ echo "I am user bandit23" | md5sum
 
 ---
 
-### 2️⃣ Hash Deterministic
+### 2. Hash Deterministic
 
 Input tetap → hash tetap.
 
@@ -203,7 +203,7 @@ File path bisa diprediksi.
 
 ---
 
-### 3️⃣ Data Leak via /tmp
+### 3. Data Leak via /tmp
 
 Sensitive data disimpan di:
 
@@ -215,7 +215,7 @@ Jika nama file bisa dihitung → bisa diambil.
 
 ---
 
-### 4️⃣ Flow Serangan
+### 4. Flow Serangan
 
 ```
 Cron run as bandit23
@@ -243,7 +243,7 @@ Di dunia nyata ini bisa disebut:
 
 ---
 
-## Ringkasan Brutal
+## Ringkasan
 
 * Enumerasi cron.
 * Baca script.
@@ -253,4 +253,3 @@ Di dunia nyata ini bisa disebut:
 * Selesai.
 
 Ini latihan analisa script + prediksi output deterministik.
-.

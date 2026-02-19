@@ -45,7 +45,7 @@ Tools yang dipakai:
 
 ---
 
-## 1 Login ke Server
+## 1. Login ke Server
 
 ```bash
 ssh bandit12@bandit.labs.overthewire.org -p 2220
@@ -53,7 +53,7 @@ ssh bandit12@bandit.labs.overthewire.org -p 2220
 
 ---
 
-## 2 Buat Directory Kerja Sementara
+## 2. Buat Directory Kerja Sementara
 
 ```bash
 mktemp -d
@@ -62,7 +62,7 @@ cd /tmp/tmp.xxxxxx
 
 ---
 
-## 3 Copy File Target
+## 3. Copy File Target
 
 ```bash
 cp ~/data.txt .
@@ -70,7 +70,7 @@ cp ~/data.txt .
 
 ---
 
-## 4 Reverse Hexdump → Binary
+## 4. Reverse Hexdump → Binary
 
 ```bash
 xxd -r data.txt > data.bin
@@ -78,7 +78,7 @@ xxd -r data.txt > data.bin
 
 ---
 
-## 5 Identifikasi Tipe File
+## 5. Identifikasi Tipe File
 
 ```bash
 file data.bin
@@ -92,7 +92,7 @@ gzip compressed data
 
 ---
 
-# 🔁 Loop Extraction Strategy
+# Loop Extraction Strategy
 
 Workflow selalu sama:
 
@@ -252,7 +252,7 @@ ASCII text
 
 ---
 
-## 🎯 Final Step
+## Final Step
 
 Baca isi file terakhir:
 
